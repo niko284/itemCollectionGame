@@ -1,0 +1,21 @@
+{
+    "name": "Item Collection Sample Game",
+    "tree": {
+      "$className": "DataModel",
+      "ReplicatedStorage": {
+        "$path": "src/Shared",
+        "Packages": {
+          "$path": "Packages"
+        },
+        "$ignoreUnknownInstances": true
+      },
+      "ServerScriptService": {
+        "$path": "src/Server"
+      },
+      "StarterPlayer": {
+        "StarterPlayerScripts": {
+          "$path": "src/Client"
+        }
+      }
+    }
+  }

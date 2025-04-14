@@ -1,0 +1,18 @@
+[package]
+name = "serunite-development/programmer-assessment"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+Fusion = "elttob/fusion@0.2.0"
+Knit = "sleitnick/knit@*"
+Lapis = "nezuo/lapis@0.3.4"
+t = "osyrisrblx/t@3.1.1"
+Signal = "sleitnick/signal@2.0.3"
+Promise = "evaera/promise@4.0.0"
+Freeze = "duckarmor/freeze@0.1.4"
+Matter = "matter-ecs/matter@0.8.4"
+MatterReplication = "vocksel/matter-replication@0.1.1"
+Spark = "nezuo/spark@0.2.1"
+Plasma = "matter-ecs/plasma@0.4.4"
