@@ -38,7 +38,13 @@ function EquipmentService:KnitInit()
 			end
 		end
 
+		local first = true -- Used to check if the player is joining for the first time.
+
 		Player.CharacterAdded:Connect(function()
+			if first then
+				first = false -- Set to false so we don't run this again.
+				return
+			end
 			for _, equippedItem in Inventory.Equipped do
 				local itemInfo = ItemUtility.GetItemInfoFromName(equippedItem.Name)
 				if itemInfo then
@@ -54,7 +60,7 @@ function EquipmentService:KnitInit()
 		if inventoryItem then
 			local inventoryItemInfo = ItemUtility.GetItemInfoFromName(inventoryItem.Name)
 			if inventoryItemInfo then
-				EquipmentService:HandleItemEquipped(Player, inventoryItem, inventoryItemInfo, true)
+				EquipmentService:HandleItemEquipped(Player, inventoryItem, inventoryItemInfo)
 			end
 		end
 	end)

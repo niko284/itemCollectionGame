@@ -11,9 +11,7 @@ local InterfaceController = {
 	Name = "InterfaceController",
 }
 
-print("Yes")
 function InterfaceController:KnitStart()
-	print("Start")
 	local newApp = App({})
 	newApp.Parent = LocalPlayer:WaitForChild("PlayerGui")
 end

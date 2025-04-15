@@ -15,5 +15,9 @@ return {
 		Name = "Revolver",
 		Type = "Gun",
 		Default = true,
-	}
+	},
+	{
+		Name = "Classic Sword",
+		Type = "Sword",
+	},
 } :: { Types.ItemInfo }

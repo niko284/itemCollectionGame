@@ -13,7 +13,7 @@ local Knit = require(Packages.Knit)
 
 local SYSTEM_CONTAINERS = {
 	ServerScriptService.ecs.systems,
-	ReplicatedStorage.ecs.systems
+	ReplicatedStorage.ecs.systems,
 } :: any
 local COLLECTION_COMPONENTS = {
 	TargetZone = {
@@ -44,3 +44,5 @@ Knit.Start()
 
 local world = ecsStart(SYSTEM_CONTAINERS, services)
 bootstrapCollections(world, COLLECTION_COMPONENTS, { workspace })
+
+print("Started server")

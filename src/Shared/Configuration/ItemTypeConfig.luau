@@ -7,6 +7,7 @@ return {
 		SpawnedByTarget = true,
 		UniqueProps = {},
 		CanEquip = true,
+		EquippedAtOnce = 2,
 	},
 	{
 		Type = "Gun",

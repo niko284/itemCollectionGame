@@ -71,6 +71,14 @@ function GunService:KnitInit()
 		if hitPart then
 			-- We can insert the part we hit in a queue associated with the gun. A system can then process this queue.
 
+			local rootPart = player.Character and player.Character:FindFirstChild("HumanoidRootPart") :: BasePart?
+			if not rootPart then
+				return -- Player does not have a HumanoidRootPart, cannot proceed
+			end
+			if (hitPart.Position - rootPart.Position).Magnitude > gun.range * 1.2 then
+				return -- Hit part is too far away from the gun to be valid
+			end
+
 			local hitEntry = {
 				part = hitPart,
 			}

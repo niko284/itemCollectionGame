@@ -101,8 +101,12 @@ function InventoryService:EquipItem(Player: Player, ItemUUID: string): ()
 	end
 
 	local newDocumentData = table.clone(playerDocument:read()) :: Types.PlayerDocument
-	local newInventory = InventoryUtility.EquipItem(newDocumentData.Inventory, ItemUUID)
+	local newInventory, unequippedItem = InventoryUtility.EquipItem(newDocumentData.Inventory, ItemUUID)
 	newDocumentData.Inventory = newInventory
+
+	if unequippedItem then
+		InventoryService.ItemUnequipped:Fire(Player, unequippedItem.UUID)
+	end
 
 	playerDocument:write(newDocumentData)
 

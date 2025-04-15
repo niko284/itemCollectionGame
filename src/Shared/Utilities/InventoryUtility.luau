@@ -27,7 +27,10 @@ function InventoryUtility.IsEquipped(Inventory: Types.Inventory, ItemUUID: strin
 	return false
 end
 
-function InventoryUtility.EquipItem(Inventory: Types.Inventory, ItemUUID: string): Types.Inventory
+function InventoryUtility.EquipItem(
+	Inventory: Types.Inventory,
+	ItemUUID: string
+): (Types.Inventory, Types.InventoryItem?)
 	local newInventory = table.clone(Inventory)
 	local newStorage = table.clone(newInventory.Storage)
 	local newEquipped = table.clone(newInventory.Equipped)
@@ -62,6 +65,7 @@ function InventoryUtility.EquipItem(Inventory: Types.Inventory, ItemUUID: string
 		then itemTypeInfo.EquippedAtOnce(itemInfo)
 		else itemTypeInfo.EquippedAtOnce
 
+	local unequippedItem = nil
 	if equippedAtOnce then
 		local equippedItems = InventoryUtility.GetItemsOfType(Inventory, itemInfo.Type, true)
 		if #equippedItems >= equippedAtOnce then -- unequip one item if we're at the limit using the first item in the alphabet to sync with the client-side prediction
@@ -72,6 +76,7 @@ function InventoryUtility.EquipItem(Inventory: Types.Inventory, ItemUUID: string
 			newInventory = InventoryUtility.UnequipItem(newInventory, equippedItems[index].UUID)
 			newStorage = newInventory.Storage
 			newEquipped = newInventory.Equipped
+			unequippedItem = equippedItems[index]
 		end
 	end
 
@@ -81,7 +86,7 @@ function InventoryUtility.EquipItem(Inventory: Types.Inventory, ItemUUID: string
 	newInventory.Storage = newStorage
 	newInventory.Equipped = newEquipped
 
-	return newInventory
+	return newInventory, unequippedItem
 end
 
 function InventoryUtility.GetItemsOfType(

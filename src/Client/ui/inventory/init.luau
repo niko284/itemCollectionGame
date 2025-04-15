@@ -47,7 +47,10 @@ local function Inventory(_props: InventoryProps)
 
 	local positionTween = Tween(inventoryPosition, TweenInfo.new(1, Enum.EasingStyle.Quad))
 
-	local inventoryChanged = InventoryController.InventoryChanged:Connect(function(newInventory: Types.Inventory)
+	local inventoryChanged = InventoryController.InventoryChanged:Connect(function(newInventory: Types.Inventory?)
+		if typeof(newInventory) ~= "table" then
+			return
+		end
 		currentInventory:set(table.clone(newInventory))
 	end)
 

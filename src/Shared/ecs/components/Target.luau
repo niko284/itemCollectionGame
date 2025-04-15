@@ -6,8 +6,8 @@ local Matter = require(Packages.Matter)
 
 return Matter.component("Target", {
 	lifetimeMs = 10000,
-	speed = 6,
+	speed = 25,
 	direction = Vector3.zero,
-	updateVelocityMillis = 1000,
+	updateVelocityMillis = 250,
 	lastVelocityChangeMillis = 0,
 })
