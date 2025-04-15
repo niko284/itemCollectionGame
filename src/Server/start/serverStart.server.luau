@@ -13,6 +13,7 @@ local Knit = require(Packages.Knit)
 
 local SYSTEM_CONTAINERS = {
 	ServerScriptService.ecs.systems,
+	ReplicatedStorage.ecs.systems
 } :: any
 local COLLECTION_COMPONENTS = {
 	TargetZone = {
@@ -20,6 +21,9 @@ local COLLECTION_COMPONENTS = {
 	},
 	Target = {
 		Components.Target,
+	},
+	Pickupable = {
+		Components.Pickupable,
 	},
 }
 

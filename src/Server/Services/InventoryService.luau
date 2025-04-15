@@ -5,14 +5,17 @@ local ServerScriptService = game:GetService("ServerScriptService")
 
 local Configuration = ReplicatedStorage.Configuration
 local Services = ServerScriptService.Services
+local Utilities = ReplicatedStorage.Utilities
 local Packages = ReplicatedStorage.Packages
 
 local Knit = require(Packages.Knit)
+local Signal = require(Packages.Signal)
 local Freeze = require(Packages.Freeze)
 local PlayerDataService = require(Services.PlayerDataService)
 local ItemService = require(Services.ItemService)
 local Items = require(Configuration.ItemConfig)
 local Types = require(Configuration.Types)
+local InventoryUtility = require(Utilities.InventoryUtility)
 
 local InventoryService = {
 	Name = "InventoryService",
@@ -20,6 +23,9 @@ local InventoryService = {
 		ItemAdded = Knit.CreateSignal(),
 		InventoryProperty = Knit.CreateProperty("PlayerInventory"), -- used to replicate the entire inventory (on init)
 	},
+	ItemEquipped = Signal.new(),
+	ItemUnequipped = Signal.new(),
+	InventoryLoaded = Signal.new(),
 }
 
 function InventoryService:KnitInit()
@@ -30,6 +36,8 @@ function InventoryService:KnitInit()
 
 		-- Replicate the inventory AFTER granting any new defaults so we don't have to go over the network twice.
 		InventoryService.Client.InventoryProperty:SetFor(Player, documentData.Inventory)
+
+		InventoryService.InventoryLoaded:Fire(Player, documentData.Inventory)
 	end)
 end
 
@@ -51,6 +59,7 @@ function InventoryService:GrantDefaults(Player: Player, Document): ()
 					wasGrantedAtLeastOne = true
 					table.insert(grantedDefaults, itemInfo.Name)
 					InventoryService:AddItem(Player, Item, false) -- only called on init, so we replicate afterwards.
+					InventoryService:EquipItem(Player, Item.UUID) -- equip the item.
 				end)
 				:catch(function(err: any)
 					warn(string.format("Failed to grant default %s: %s", itemInfo.Name, tostring(err)))
@@ -73,15 +82,63 @@ function InventoryService:AddItem(Player: Player, Item: Types.InventoryItem, Sen
 	end
 
 	local newDocumentData = table.clone(playerDocument:read())
-	local newStorage = table.clone(newDocumentData.Inventory.Storage)
+	local newInventory = InventoryUtility.AddItems(newDocumentData.Inventory, {Item})
+	newDocumentData.Inventory = newInventory
 
-	table.insert(newStorage, Item)
-
-	playerDocument:write(Freeze.Dictionary.setIn(newDocumentData, { "Inventory", "Storage" }, newStorage))
+	playerDocument:write(newDocumentData)
 
 	if SendOverNetwork ~= false then -- Notify the client a new item was added to their inventory.
 		InventoryService.Client.ItemAdded:Fire(Player, Item)
 	end
+end
+
+function InventoryService:EquipItem(Player: Player, ItemUUID: string): ()
+	local playerDocument = PlayerDataService:GetDocument(Player)
+	if not playerDocument then
+		warn("Failed to get player document")
+		return
+	end
+
+	local newDocumentData = table.clone(playerDocument:read()) :: Types.PlayerDocument
+	local newInventory = InventoryUtility.EquipItem(newDocumentData.Inventory, ItemUUID)
+	newDocumentData.Inventory = newInventory
+
+	playerDocument:write(newDocumentData)
+
+	InventoryService.ItemEquipped:Fire(Player, ItemUUID)
+end
+
+function InventoryService:UnequipItem(Player: Player, ItemUUID: string): ()
+	local playerDocument = PlayerDataService:GetDocument(Player)
+	if not playerDocument then
+		warn("Failed to get player document")
+		return
+	end
+
+	local newDocumentData = table.clone(playerDocument:read()) :: Types.PlayerDocument
+	local newInventory = InventoryUtility.UnequipItem(newDocumentData.Inventory, ItemUUID)
+	newDocumentData.Inventory = newInventory
+
+	playerDocument:write(newDocumentData)
+
+	InventoryService.ItemUnequipped:Fire(Player, ItemUUID)
+end
+
+function InventoryService:GetItemFromUUID(Player: Player, ItemUUID: string): Types.InventoryItem?
+	local playerDocument = PlayerDataService:GetDocument(Player)
+	if not playerDocument then
+		warn("Failed to get player document")
+		return nil
+	end
+
+	local inventory = playerDocument:read().Inventory
+	local item = InventoryUtility.GetItemFromUUID(inventory, ItemUUID)
+	if not item then
+		warn(string.format("Failed to get item from UUID %s", ItemUUID))
+		return nil
+	end
+
+	return item
 end
 
 return InventoryService

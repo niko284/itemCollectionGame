@@ -15,33 +15,33 @@ local function targetsMove(world: Matter.World)
 	for eid, target: Components.Target, renderable: Components.Renderable<Model> in
 		world:query(Components.Target, Components.Renderable)
 	do
-		-- Wait for the previous move to finish before starting a new one.
+		-- Wait for the previous velocity update to finish before starting a new one.
 		if
-			(target.moveTween == nil or target.moveTween.PlaybackState == Enum.PlaybackState.Completed)
-			and not target.falling
+			(
+				target.lastVelocityChangeMillis == 0
+				or now - target.lastVelocityChangeMillis >= target.updateVelocityMillis
+			) and not target.falling
 		then
 			if not target.expirationTimeMs then
 				target = target:patch({
 					expirationTimeMs = now + target.lifetimeMs,
 				})
-				world:insert(eid, target)
 			end
 
-			local renderablePrimaryPart = renderable.pvInstance.PrimaryPart :: BasePart
-			local currentPosition = renderablePrimaryPart.Position
+			local targetModel = renderable.pvInstance
+			local targetPrimaryPart = targetModel.PrimaryPart :: BasePart
 
-			local targetPosition = currentPosition + (RNG:NextUnitVector() * target.radius)
-			local timeToArrive = (currentPosition - targetPosition).Magnitude / target.speed
-			local targetTweenInfo = TweenInfo.new(timeToArrive, target.easingStyle, target.easingDirection)
-			local tweenGoals = {
-				Position = targetPosition,
-			}
+			local randomDirection = RNG:NextUnitVector()
 
-			local targetTween = TweenService:Create(renderablePrimaryPart, targetTweenInfo, tweenGoals)
+			local linearVelocity = targetPrimaryPart:FindFirstChildOfClass("LinearVelocity")
+			if linearVelocity then
+				linearVelocity.VectorVelocity = randomDirection * target.speed
+			end
+
 			target = target:patch({
-				moveTween = targetTween,
+				lastVelocityChangeMillis = now,
+				direction = randomDirection,
 			})
-			targetTween:Play()
 
 			world:insert(eid, target)
 		end

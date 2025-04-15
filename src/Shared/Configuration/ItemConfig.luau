@@ -11,4 +11,9 @@ return {
 		Name = "Venomshank",
 		Type = "Sword",
 	},
+	{
+		Name = "Revolver",
+		Type = "Gun",
+		Default = true,
+	}
 } :: { Types.ItemInfo }

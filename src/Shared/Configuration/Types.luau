@@ -2,16 +2,17 @@
 
 export type ItemInfo = {
 	Name: string,
-	Type: string,
+	Type: ItemType,
 	Default: (boolean | (Player) -> boolean)?,
 }
 
 export type ItemTypeInfo = {
-	Type: string,
+	Type: ItemType,
 	SpawnedByTarget: boolean,
 	UniqueProps: {
 		[string]: any,
 	},
+	EquippedAtOnce: (number | (ItemInfo) -> number)?
 }
 
 export type InventoryItem = {
@@ -29,6 +30,12 @@ export type PlayerDocument = {
 	Inventory: Inventory,
 }
 
-export type ItemType = "Sword"
+export type ItemType = "Sword" | "Gun"
+
+export type Sound = {
+	Id: number,
+	Volume: number,
+	Looped: boolean,
+}
 
 return {}

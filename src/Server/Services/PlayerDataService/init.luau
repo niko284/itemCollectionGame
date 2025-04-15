@@ -12,7 +12,7 @@ local Lapis = require(Packages.Lapis)
 local t = require(Packages.t)
 local Signal = require(Packages.Signal)
 
-local collectionName = RunService:IsStudio() and "Documents_Studio!" or "ItemCollectionDocuments"
+local collectionName = RunService:IsStudio() and "PlayersData" or "ItemCollectionDocuments"
 
 local collectionInternal = Lapis.createCollection(collectionName, {
 	defaultData = require(script.DocumentSchema) :: Types.PlayerDocument,

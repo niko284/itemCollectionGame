@@ -7,7 +7,6 @@ local Matter = require(Packages.Matter)
 local Plasma = require(Packages.Plasma)
 
 local function start(systemsContainers: { Instance }, services)
-	print("Starting ECS")
 	local world = Matter.World.new()
 
 	local debugger = Matter.Debugger.new(Plasma) -- Pass Plasma into the debugger!

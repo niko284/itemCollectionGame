@@ -7,4 +7,10 @@ return {
 		SpawnedByTarget = true,
 		UniqueProps = {},
 	},
+	{
+		Type = "Gun",
+		SpawnedByTarget = false,
+		UniqueProps = {},
+		EquippedAtOnce = 1,
+	}
 } :: { Types.ItemTypeInfo }
