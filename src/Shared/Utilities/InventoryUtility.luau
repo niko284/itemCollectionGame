@@ -16,6 +16,17 @@ local StringUtility = require(Utilities.StringUtility)
 local InventoryUtility = {}
 
 -- Returns an immutable copy of the inventory with the item equipped
+
+function InventoryUtility.IsEquipped(Inventory: Types.Inventory, ItemUUID: string): boolean
+	for _, item in Inventory.Equipped do
+		if item.UUID == ItemUUID then
+			return true
+		end
+	end
+
+	return false
+end
+
 function InventoryUtility.EquipItem(Inventory: Types.Inventory, ItemUUID: string): Types.Inventory
 	local newInventory = table.clone(Inventory)
 	local newStorage = table.clone(newInventory.Storage)
@@ -35,17 +46,17 @@ function InventoryUtility.EquipItem(Inventory: Types.Inventory, ItemUUID: string
 
 	local itemInfo = ItemUtility.GetItemInfoFromName(newStorage[indexToRemove].Name)
 
-    if not itemInfo then
-        warn("ItemInfo not found for item: " .. newStorage[indexToRemove].Name)
-        return newInventory
-    end
+	if not itemInfo then
+		warn("ItemInfo not found for item: " .. newStorage[indexToRemove].Name)
+		return newInventory
+	end
 
 	local itemTypeInfo = ItemUtility.GetItemTypeInfoFromName(itemInfo.Type)
 
-    if not itemTypeInfo then
-        warn("ItemTypeInfo not found for item: " .. itemInfo.Name)
-        return newInventory
-    end
+	if not itemTypeInfo then
+		warn("ItemTypeInfo not found for item: " .. itemInfo.Name)
+		return newInventory
+	end
 
 	local equippedAtOnce = if typeof(itemTypeInfo.EquippedAtOnce) == "function"
 		then itemTypeInfo.EquippedAtOnce(itemInfo)
@@ -83,10 +94,10 @@ function InventoryUtility.GetItemsOfType(
 	local filteredItems = {} :: { Types.InventoryItem }
 	for _, item in pairs(items) do
 		local itemInfo = ItemUtility.GetItemInfoFromName(item.Name)
-        if not itemInfo then
-            warn("ItemInfo not found for item: " .. item.Name)
-            continue
-        end
+		if not itemInfo then
+			warn("ItemInfo not found for item: " .. item.Name)
+			continue
+		end
 		if itemInfo.Type == ItemType then
 			table.insert(filteredItems, item :: any)
 		end
@@ -150,4 +161,4 @@ function InventoryUtility.GetItemFromUUID(Inventory: Types.Inventory, ItemUUID: 
 	return nil
 end
 
-return InventoryUtility 
+return InventoryUtility

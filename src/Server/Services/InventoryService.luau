@@ -16,12 +16,13 @@ local ItemService = require(Services.ItemService)
 local Items = require(Configuration.ItemConfig)
 local Types = require(Configuration.Types)
 local InventoryUtility = require(Utilities.InventoryUtility)
+local ItemUtility = require(Utilities.ItemUtility)
 
 local InventoryService = {
 	Name = "InventoryService",
 	Client = {
 		ItemAdded = Knit.CreateSignal(),
-		InventoryProperty = Knit.CreateProperty("PlayerInventory"), -- used to replicate the entire inventory (on init)
+		InventoryProperty = Knit.CreateProperty("PlayerInventory", nil), -- used to replicate the entire inventory (on init)
 	},
 	ItemEquipped = Signal.new(),
 	ItemUnequipped = Signal.new(),
@@ -82,7 +83,7 @@ function InventoryService:AddItem(Player: Player, Item: Types.InventoryItem, Sen
 	end
 
 	local newDocumentData = table.clone(playerDocument:read())
-	local newInventory = InventoryUtility.AddItems(newDocumentData.Inventory, {Item})
+	local newInventory = InventoryUtility.AddItems(newDocumentData.Inventory, { Item })
 	newDocumentData.Inventory = newInventory
 
 	playerDocument:write(newDocumentData)
@@ -139,6 +140,83 @@ function InventoryService:GetItemFromUUID(Player: Player, ItemUUID: string): Typ
 	end
 
 	return item
+end
+
+function InventoryService.Client:EquipItem(Player: Player, ItemUUID: any?): Types.NetworkResponse
+	local Document = PlayerDataService:GetDocument(Player)
+	if not Document then
+		return { Success = false, Error = "Document not found" }
+	end
+
+	if not ItemUUID or typeof(ItemUUID) ~= "string" then
+		return { Success = false, Error = "Invalid ItemUUID" }
+	end
+
+	local documentData = Document:read()
+	local inventory = documentData.Inventory
+
+	local Item = InventoryUtility.GetItemFromUUID(inventory, ItemUUID)
+	if not Item then
+		return { Success = false, Error = "Item not found" }
+	end
+
+	local ItemInfo = ItemUtility.GetItemInfoFromName(Item.Name)
+
+	if not ItemInfo then
+		return { Success = false, Error = "ItemInfo not found" }
+	end
+
+	local ItemTypeInfo = ItemUtility.GetItemTypeInfoFromName(ItemInfo.Type)
+
+	if not ItemTypeInfo then
+		return { Success = false, Error = "ItemTypeInfo not found" }
+	end
+
+	if ItemTypeInfo.CanEquip == false then
+		return { Success = false, Error = "Item cannot be equipped" }
+	end
+
+	InventoryService:EquipItem(Player, ItemUUID)
+
+	return { Success = true }
+end
+
+function InventoryService.Client:UnequipItem(Player: Player, ItemUUID: any?): Types.NetworkResponse
+	local Document = PlayerDataService:GetDocument(Player)
+	if not Document then
+		return { Success = false, Error = "Document not found" }
+	end
+
+	local inventory = Document:read().Inventory
+
+	if not ItemUUID or typeof(ItemUUID) ~= "string" then
+		return { Success = false, Error = "Invalid ItemUUID" }
+	end
+
+	local Item = InventoryUtility.GetItemFromUUID(inventory, ItemUUID)
+	if not Item then
+		return { Success = false, Error = "Item not found" }
+	end
+
+	local ItemInfo = ItemUtility.GetItemInfoFromName(Item.Name)
+
+	if not ItemInfo then
+		return { Success = false, Error = "ItemInfo not found" }
+	end
+
+	local ItemTypeInfo = ItemUtility.GetItemTypeInfoFromName(ItemInfo.Type)
+
+	if not ItemTypeInfo then
+		return { Success = false, Error = "ItemTypeInfo not found" }
+	end
+
+	if ItemTypeInfo.CanEquip == false then
+		return { Success = false, Error = "Item cannot be unequipped" }
+	end
+
+	InventoryService:UnequipItem(Player, ItemUUID)
+
+	return { Success = true }
 end
 
 return InventoryService

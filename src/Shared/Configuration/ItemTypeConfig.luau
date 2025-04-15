@@ -6,11 +6,13 @@ return {
 		Type = "Sword",
 		SpawnedByTarget = true,
 		UniqueProps = {},
+		CanEquip = true,
 	},
 	{
 		Type = "Gun",
 		SpawnedByTarget = false,
 		UniqueProps = {},
 		EquippedAtOnce = 1,
-	}
+		CanEquip = true,
+	},
 } :: { Types.ItemTypeInfo }

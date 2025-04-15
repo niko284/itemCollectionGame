@@ -11,7 +11,7 @@ local Sounds = require(Configuration.SoundConfig)
 local SoundUtility = require(Utilities.SoundUtility)
 local Promise = require(Packages.Promise)
 
-local Assets = ReplicatedStorage:FindFirstChild("assets") :: Folder 
+local Assets = ReplicatedStorage:FindFirstChild("assets") :: Folder
 local BulletBeam = Assets:FindFirstChild("BulletBeam") :: Beam
 
 local VFXUtility = {}
@@ -87,6 +87,15 @@ function VFXUtility.TweenTransparencySequence(object: Beam, fromValue: number, t
 	return Promise.fromEvent(tween.Completed, function()
 		return true
 	end)
+end
+
+function VFXUtility.EmitParticles(Part: BasePart): ()
+	for _, emitter in Part:GetDescendants() do
+		if emitter:IsA("ParticleEmitter") then
+			print("Emitting particles")
+			emitter:Emit(emitter:GetAttribute("EmitCount") :: number? or 1)
+		end
+	end
 end
 
 return VFXUtility

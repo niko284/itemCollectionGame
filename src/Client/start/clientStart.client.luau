@@ -13,14 +13,14 @@ local Knit = require(Packages.Knit)
 
 local SYSTEM_CONTAINERS = {
 	LocalPlayer.PlayerScripts.ecs.systems,
-	ReplicatedStorage.ecs.systems
+	ReplicatedStorage.ecs.systems,
 } :: any
 local COLLECTION_COMPONENTS = {}
 
 local function AddControllersCustom(parent: Instance)
 	local controllers = {}
 	for _, v in parent:GetChildren() do
-		if v:IsA("ModuleScript") and v.Name:match("Service$") then
+		if v:IsA("ModuleScript") and v.Name:match("Controller$") then
 			local controller = require(v) :: any
 			table.insert(controllers, Knit.CreateController(controller))
 		end

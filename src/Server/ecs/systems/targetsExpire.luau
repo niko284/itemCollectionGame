@@ -24,7 +24,9 @@ local function targetsExpire(world: Matter.World)
 				end
 			end
 			task.delay(1, function()
-				world:despawn(eid)
+				if world:contains(eid) then -- we might've killed the target while it was shrinking in size
+					world:despawn(eid)
+				end
 			end)
 			world:insert(eid, target)
 		end

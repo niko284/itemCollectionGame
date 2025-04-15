@@ -8,16 +8,15 @@ local Packages = ReplicatedStorage.Packages
 local VFXUtility = require(Utilities.VFXUtility)
 local Knit = require(Packages.Knit)
 
-local GunService = Knit.GetService("GunService")
-
 local GunController = {
-    Name = "GunController"
+	Name = "GunController",
 }
 
-function GunController:KnitInit()
-    GunService.GunShot:Connect(function(Player: Player, HitPart: BasePart)
-        VFXUtility.Gunshot(Player.Character :: Model, HitPart.Position)
-    end)
+function GunController:KnitStart()
+	local GunService = Knit.GetService("GunService")
+	GunService.GunShot:Connect(function(Player: Player, hitPosition: Vector3)
+		VFXUtility.Gunshot(Player.Character :: Model, hitPosition)
+	end)
 end
 
 return GunController

@@ -8,11 +8,12 @@ export type ItemInfo = {
 
 export type ItemTypeInfo = {
 	Type: ItemType,
+	CanEquip: boolean,
 	SpawnedByTarget: boolean,
 	UniqueProps: {
 		[string]: any,
 	},
-	EquippedAtOnce: (number | (ItemInfo) -> number)?
+	EquippedAtOnce: (number | (ItemInfo) -> number)?,
 }
 
 export type InventoryItem = {
@@ -36,6 +37,11 @@ export type Sound = {
 	Id: number,
 	Volume: number,
 	Looped: boolean,
+}
+
+export type NetworkResponse = {
+	Success: boolean,
+	Error: string?,
 }
 
 return {}

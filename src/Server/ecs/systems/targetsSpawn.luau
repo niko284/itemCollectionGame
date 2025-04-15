@@ -18,8 +18,8 @@ local function targetsSpawn(world: Matter.World)
 	-- Give targets a health component when spawned.
 	for eid, _target: Components.Target in world:query(Components.Target):without(Components.Health) do
 		local targetHealth = Components.Health({
-			current = 5,
-			max = 5,
+			current = 10,
+			max = 10,
 			healthPerSecond = 1,
 		})
 
