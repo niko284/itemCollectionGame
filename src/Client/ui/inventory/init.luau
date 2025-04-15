@@ -104,6 +104,8 @@ local function Inventory(_props: InventoryProps)
 				BorderSizePixel = 0,
 				Position = UDim2.fromScale(0.0278, 0.198),
 				Size = UDim2.fromScale(0.944, 0.759),
+				CanvasSize = UDim2.fromScale(0, 0),
+				AutomaticCanvasSize = Enum.AutomaticSize.Y,
 
 				[Children] = {
 					New("UIGridLayout")({
